@@ -1,10 +1,10 @@
-# FCN model
+# VoxelFlow model
 model = dict(
     name="VoxelFlow",
-    syn_type="extra",
+    syn_type="inter",
     bn_param=dict(momentum=0.9997),
     bn_training=True,
-    bn_parallel=False,
+    bn_parallel=True,
     mult_conv_w=[1, 1],  # lr, decay
     mult_conv_b=[2, 0],  # lr, decay
     mult_bn=[1, 1],  # lr, decay
@@ -17,7 +17,7 @@ dataset = 'UCF101'
 
 # Training strategry
 train = dict(
-    batch_size=80,
+    batch_size=64,
     optimizer=dict(
         algorithm='ADAM',
         args=dict(
@@ -30,6 +30,7 @@ train = dict(
             # rate_decay_step=2000,
             max_epoch=400)),
     data_list='train_motion',
+    syn_type=model['syn_type'],
     crop_size=[256, 256],
     rotation=[-10, 10],
     crop_policy='random',
@@ -40,6 +41,7 @@ train = dict(
 test = dict(
     batch_size=32,
     data_list='test',
+    syn_type=model['syn_type'],
     crop_size=[256, 256],
     crop_policy='center',
     scale_factor=[1.07])

@@ -85,4 +85,9 @@ class UCF101(Dataset):
             images[i] = torch.from_numpy(images[i]).permute(
                 2, 0, 1).contiguous().float()
 
-        return torch.cat([images[0], images[1]], dim=0), images[2]
+        if self.config.syn_type == 'inter':
+            return torch.cat([images[0], images[2]], dim=0), images[1]
+        elif self.config.syn_type == 'extra':
+            return torch.cat([images[0], images[1]], dim=0), images[2]
+        else:
+            raise ValueError('Unknown syn_type ' + self.syn_type)

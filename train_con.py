@@ -127,14 +127,15 @@ def train(train_loader, model, optimizer, criterion, epoch):
 
         # compute output
         output = model(input_var)
-        output2 = model(input_var[:, (3, 4, 5, 0, 1, 2), :, :])
+        input_var2 = torch.cat(output, input_var[:, 3:6, :, :], dim=1)
+        output2 = model(input_var2)
 
         idx = np.where(istrain.numpy() == 1)[0]
-        loss1 = criterion((output - output2),
-                          output.new().resize_as_(output).zero_())
+
+        loss1 = criterion(output2, input_var[:, 0:3, :, :])
         loss2 = criterion(output[idx, :, :, :], target_var[idx, :, :, :])
-        loss3 = criterion(output2[idx, :, :, :], target_var[idx, :, :, :])
-        loss = (loss1 + loss2 + loss3) / 2
+
+        loss = (loss1 + loss2) / 2
 
         # measure accuracy and record loss
         losses.update(loss.item(), input.size(0))
