@@ -10,6 +10,7 @@ from core import datasets
 from core.utils.optim import Optim
 from core.utils.config import Config
 from core.utils.eval import EvalPSNR
+from core.ops.sync_bn import DataParallelwithSyncBN
 
 best_PSNR = 0
 
@@ -79,7 +80,7 @@ def main():
         else:
             print(("=> no checkpoint found at '{}'".format(checkpoint_path)))
 
-    model = torch.nn.DataParallel(
+    model = DataParallelwithSyncBN(
         model, device_ids=range(len(cfg.device))).cuda()
 
     # define loss function (criterion) optimizer and evaluator
