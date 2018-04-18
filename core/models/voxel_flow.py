@@ -195,10 +195,10 @@ class VoxelFlow(nn.Module):
             coor_x_2 = grid_x + flow[:, 0, :, :]
             coor_y_2 = grid_y + flow[:, 1, :, :]
         elif self.syn_type == 'extra':
-            coor_x_1 = grid_x + flow[:, 0, :, :] * 2
-            coor_y_1 = grid_y + flow[:, 1, :, :] * 2
-            coor_x_2 = grid_x + flow[:, 0, :, :]
-            coor_y_2 = grid_y + flow[:, 1, :, :]
+            coor_x_1 = grid_x - flow[:, 0, :, :] * 2
+            coor_y_1 = grid_y - flow[:, 1, :, :] * 2
+            coor_x_2 = grid_x - flow[:, 0, :, :]
+            coor_y_2 = grid_y - flow[:, 1, :, :]
         else:
             raise ValueError('Unknown syn_type ' + self.syn_type)
 

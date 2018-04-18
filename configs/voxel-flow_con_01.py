@@ -1,7 +1,7 @@
 # VoxelFlow model
 model = dict(
     name="VoxelFlow",
-    syn_type="inter",
+    syn_type="extra",
     bn_param=dict(momentum=0.9997),
     bn_training=True,
     bn_parallel=True,
@@ -10,14 +10,16 @@ model = dict(
     mult_bn=[1, 1],  # lr, decay
 )
 
-device = [0, 1, 2, 3]
+combine_weight = 0.1
+
+device = [0, 1, 2]
 resume = ''
 weight = ''
 dataset = 'UCF101'
 
 # Training strategry
 train = dict(
-    batch_size=64,
+    batch_size=42,
     optimizer=dict(
         algorithm='ADAM',
         args=dict(
@@ -39,7 +41,7 @@ train = dict(
 
 # Testing strategry
 test = dict(
-    batch_size=32,
+    batch_size=24,
     data_list='test',
     syn_type=model['syn_type'],
     crop_size=[256, 256],
@@ -48,5 +50,5 @@ test = dict(
 
 # Logging
 output_dir = 'outputs'
-snapshot_pref = 'voxelflow_con'
+snapshot_pref = 'voxelflow_con_01'
 logging = dict(log_dir='', print_freq=50, eval_freq=1)

@@ -10,14 +10,16 @@ model = dict(
     mult_bn=[1, 1],  # lr, decay
 )
 
-device = [6, 7]
+combine_weight = 0.5
+
+device = [3, 4, 5]
 resume = ''
 weight = ''
 dataset = 'UCF101'
 
 # Training strategry
 train = dict(
-    batch_size=48,
+    batch_size=42,
     optimizer=dict(
         algorithm='ADAM',
         args=dict(
@@ -48,5 +50,5 @@ test = dict(
 
 # Logging
 output_dir = 'outputs'
-snapshot_pref = 'voxelflow'
+snapshot_pref = 'voxelflow_con_1'
 logging = dict(log_dir='', print_freq=50, eval_freq=1)

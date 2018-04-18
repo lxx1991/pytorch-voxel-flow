@@ -79,7 +79,7 @@ def main():
         model, device_ids=range(len(cfg.device))).cuda()
 
     # define loss function (criterion) optimizer and evaluator
-    criterion = torch.nn.L1Loss().cuda()
+    criterion = torch.nn.MSELoss().cuda()
     evaluator = EvalPSNR(255.0 / np.mean(cfg.test.input_std))
 
     # PSNR = validate(val_loader, model, optimizer, criterion, evaluator)
@@ -122,12 +122,12 @@ def train(train_loader, model, optimizer, criterion, epoch):
                                             epoch)
 
         target = target.cuda(async=True)
-        input_var = torch.autograd.Variable(input)
-        target_var = torch.autograd.Variable(target)
+        input_var = torch.autograd.Variable(input).cuda()
+        target_var = torch.autograd.Variable(target).cuda()
 
         # compute output
         output = model(input_var)
-        input_var2 = torch.cat(output, input_var[:, 3:6, :, :], dim=1)
+        input_var2 = torch.cat((output, input_var[:, 3:6, :, :]), dim=1)
         output2 = model(input_var2)
 
         idx = np.where(istrain.numpy() == 1)[0]
@@ -135,8 +135,7 @@ def train(train_loader, model, optimizer, criterion, epoch):
         loss1 = criterion(output2, input_var[:, 0:3, :, :])
         loss2 = criterion(output[idx, :, :, :], target_var[idx, :, :, :])
 
-        loss = (loss1 + loss2) / 2
-
+        loss = loss1 * cfg.combine_weight + loss2
         # measure accuracy and record loss
         losses.update(loss.item(), input.size(0))
 

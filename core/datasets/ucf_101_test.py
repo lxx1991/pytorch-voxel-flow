@@ -40,10 +40,7 @@ class UCF101Test(Dataset):
             os.path.join(self.img_path, self.img_list[idx], 'motion_mask.png'),
             cv2.IMREAD_UNCHANGED)
 
-        if hasmask:
-            mask = (mask.squeeze() > 0).astype(np.uint8)
-        else:
-            mask = (mask.squeeze() + 1 > 0).astype(np.uint8)
+        mask = (mask.squeeze() > 0).astype(np.uint8)
 
         # norm
         for i in range(3):
@@ -53,6 +50,14 @@ class UCF101Test(Dataset):
                 2, 0, 1).contiguous().float()
 
         mask = torch.from_numpy(mask).contiguous().long()
+
+        if not hasmask:
+            if self.config.syn_type == 'inter':
+                return torch.cat([images[0], images[2]], dim=0), images[1]
+            elif self.config.syn_type == 'extra':
+                return torch.cat([images[0], images[1]], dim=0), images[2]
+            else:
+                raise ValueError('Unknown syn_type ' + self.syn_type)
 
         if self.config.syn_type == 'inter':
             return torch.cat([images[0], images[2]], dim=0), images[1], mask

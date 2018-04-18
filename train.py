@@ -84,7 +84,7 @@ def main():
         model, device_ids=range(len(cfg.device))).cuda()
 
     # define loss function (criterion) optimizer and evaluator
-    criterion = torch.nn.L1Loss().cuda()
+    criterion = torch.nn.MSELoss().cuda()
     evaluator = EvalPSNR(255.0 / np.mean(cfg.test.input_std))
 
     # PSNR = validate(val_loader, model, optimizer, criterion, evaluator)
@@ -127,8 +127,8 @@ def train(train_loader, model, optimizer, criterion, epoch):
                                             epoch)
 
         target = target.cuda(async=True)
-        input_var = torch.autograd.Variable(input)
-        target_var = torch.autograd.Variable(target)
+        input_var = torch.autograd.Variable(input).cuda()
+        target_var = torch.autograd.Variable(target).cuda()
 
         # compute output
         output = model(input_var)
