@@ -23,7 +23,7 @@ class Optim(object):
         if self._cfg.algorithm == 'SGD':
             if self._cfg.args.policy == 'step':
                 decay = self._cfg.args.rate_decay_factor**(
-                    iter // self._cfg.args.rate_decay_step)
+                    epoch // self._cfg.args.rate_decay_step)
                 lr = self._cfg.args.base_lr * decay
                 decay = self._cfg.args.weight_decay
                 for param_group in self._optimizer.param_groups:

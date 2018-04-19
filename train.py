@@ -53,7 +53,7 @@ def main():
         drop_last=True)
 
     val_loader = torch.utils.data.DataLoader(
-        datasets.UCF101Test(cfg.test),
+        datasets.UCF101(cfg.test, False),
         batch_size=cfg.test.batch_size,
         shuffle=False,
         num_workers=32,
@@ -185,7 +185,7 @@ def validate(val_loader, model, optimizer, criterion, evaluator):
         model.eval()
 
         end = time.time()
-        for i, (input, target, mask) in enumerate(val_loader):
+        for i, (input, target) in enumerate(val_loader):
             target = target.cuda(async=True)
             input_var = torch.autograd.Variable(input)
             target_var = torch.autograd.Variable(target)
@@ -198,7 +198,7 @@ def validate(val_loader, model, optimizer, criterion, evaluator):
             # measure accuracy and record loss
 
             pred = output.data.cpu().numpy()
-            evaluator(pred, target.cpu().numpy(), mask.cpu().numpy())
+            evaluator(pred, target.cpu().numpy())
             losses.update(loss.item(), input.size(0))
 
             # measure elapsed time

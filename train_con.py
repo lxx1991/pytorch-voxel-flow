@@ -32,6 +32,11 @@ def main():
     cudnn.benchmark = True
     cudnn.fastest = True
 
+    if hasattr(datasets, cfg.dataset):
+        ds = getattr(datasets, cfg.dataset)
+    else:
+        raise ValueError('Unknown dataset ' + cfg.dataset)
+
     model = getattr(models, cfg.model.name)(cfg.model).cuda()
     cfg.train.input_mean = model.input_mean
     cfg.train.input_std = model.input_std
@@ -40,7 +45,7 @@ def main():
 
     # Data loading code
     train_loader = torch.utils.data.DataLoader(
-        datasets.UCF101Fusion(cfg.train, cfg.test),
+        ds(cfg.train, cfg.test),
         batch_size=cfg.train.batch_size,
         shuffle=True,
         num_workers=32,
@@ -48,7 +53,7 @@ def main():
         drop_last=True)
 
     val_loader = torch.utils.data.DataLoader(
-        datasets.UCF101Test(cfg.test),
+        datasets.UCF101(cfg.test, False),
         batch_size=cfg.test.batch_size,
         shuffle=False,
         num_workers=32,
@@ -108,7 +113,8 @@ def main():
 def train(train_loader, model, optimizer, criterion, epoch):
     batch_time = AverageMeter()
     data_time = AverageMeter()
-    losses = AverageMeter()
+    losses1 = AverageMeter()
+    losses2 = AverageMeter()
 
     # switch to train mode
     model.train()
@@ -137,7 +143,8 @@ def train(train_loader, model, optimizer, criterion, epoch):
 
         loss = loss1 * cfg.combine_weight + loss2
         # measure accuracy and record loss
-        losses.update(loss.item(), input.size(0))
+        losses1.update(loss1.item(), input.size(0))
+        losses2.update(loss2.item(), idx.size)
 
         # compute gradient and do SGD step
         optimizer.zero_grad()
@@ -152,17 +159,20 @@ def train(train_loader, model, optimizer, criterion, epoch):
             print(('Epoch: [{0}][{1}/{2}], lr: {lr:.5f}\t'
                    'Time {batch_time.val:.3f} ({batch_time.avg:.3f})\t'
                    'Data {data_time.val:.3f} ({data_time.avg:.3f})\t'
-                   'Loss {loss.val:.4f} ({loss.avg:.4f})\t'.format(
+                   'Loss1 {loss1.val:.4f} ({loss1.avg:.4f})\t'
+                   'Loss2 {loss2.val:.4f} ({loss2.avg:.4f})\t'.format(
                        epoch,
                        i,
                        len(train_loader),
                        batch_time=batch_time,
                        data_time=data_time,
-                       loss=losses,
+                       loss1=losses1,
+                       loss2=losses2,
                        lr=lr)))
             batch_time.reset()
             data_time.reset()
-            losses.reset()
+            losses1.reset()
+            losses2.reset()
 
 
 def flip(x, dim):
@@ -187,7 +197,7 @@ def validate(val_loader, model, optimizer, criterion, evaluator):
         model.eval()
 
         end = time.time()
-        for i, (input, target, mask) in enumerate(val_loader):
+        for i, (input, target) in enumerate(val_loader):
             target = target.cuda(async=True)
             input_var = torch.autograd.Variable(input)
             target_var = torch.autograd.Variable(target)
@@ -200,7 +210,7 @@ def validate(val_loader, model, optimizer, criterion, evaluator):
             # measure accuracy and record loss
 
             pred = output.data.cpu().numpy()
-            evaluator(pred, target.cpu().numpy(), mask.cpu().numpy())
+            evaluator(pred, target.cpu().numpy())
             losses.update(loss.item(), input.size(0))
 
             # measure elapsed time

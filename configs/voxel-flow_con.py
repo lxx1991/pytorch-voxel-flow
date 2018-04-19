@@ -3,23 +3,23 @@ model = dict(
     name="VoxelFlow",
     syn_type="extra",
     bn_param=dict(momentum=0.9997),
-    bn_training=True,
-    bn_parallel=True,
+    bn_training=False,
+    bn_parallel=False,
     mult_conv_w=[1, 1],  # lr, decay
     mult_conv_b=[2, 0],  # lr, decay
     mult_bn=[1, 1],  # lr, decay
 )
 
-combine_weight = 0.5
+combine_weight = 0.2
 
-device = [3, 4, 5]
-resume = ''
+device = [0, 1, 2, 3]
+resume = 'outputs/voxelflow_model_best.pth.tar'
 weight = ''
-dataset = 'UCF101'
+dataset = 'UCF101Fusion'
 
 # Training strategry
 train = dict(
-    batch_size=42,
+    batch_size=64,
     optimizer=dict(
         algorithm='ADAM',
         args=dict(
@@ -32,6 +32,7 @@ train = dict(
             # rate_decay_step=2000,
             max_epoch=400)),
     data_list='train_motion',
+    step=3,
     syn_type=model['syn_type'],
     crop_size=[256, 256],
     rotation=[-10, 10],
@@ -41,8 +42,9 @@ train = dict(
 
 # Testing strategry
 test = dict(
-    batch_size=24,
-    data_list='test',
+    batch_size=64,
+    data_list='test_motion',
+    step=3,
     syn_type=model['syn_type'],
     crop_size=[256, 256],
     crop_policy='center',
@@ -50,5 +52,5 @@ test = dict(
 
 # Logging
 output_dir = 'outputs'
-snapshot_pref = 'voxelflow_con_1'
+snapshot_pref = 'voxelflow_con'
 logging = dict(log_dir='', print_freq=50, eval_freq=1)

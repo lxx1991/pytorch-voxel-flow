@@ -3,21 +3,21 @@ model = dict(
     name="VoxelFlow",
     syn_type="extra",
     bn_param=dict(momentum=0.9997),
-    bn_training=True,
+    bn_training=False,
     bn_parallel=False,
     mult_conv_w=[1, 1],  # lr, decay
     mult_conv_b=[2, 0],  # lr, decay
     mult_bn=[1, 1],  # lr, decay
 )
 
-device = [0, 1, 2, 3, 4, 5, 6, 7]
-resume = ''
+device = [4, 5, 6, 7]
+resume = 'outputs/voxelflow_model_best.pth.tar'
 weight = ''
 dataset = 'UCF101'
 
 # Training strategry
 train = dict(
-    batch_size=128,
+    batch_size=64,
     optimizer=dict(
         algorithm='ADAM',
         args=dict(
@@ -51,5 +51,5 @@ test = dict(
 
 # Logging
 output_dir = 'outputs'
-snapshot_pref = 'voxelflow'
+snapshot_pref = 'voxelflow_finetune'
 logging = dict(log_dir='', print_freq=50, eval_freq=1)
