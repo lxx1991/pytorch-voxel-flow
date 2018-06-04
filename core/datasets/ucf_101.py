@@ -9,13 +9,9 @@ from core.utils import transforms as tf
 
 class UCF101(Dataset):
 
-    num_class = 21
-    ignore_label = 255
-    background_label = 0
-
     def __init__(self, config, istrain=True):
         super(UCF101, self).__init__()
-        dataset_path = 'data/UCFI-101'
+        dataset_path = 'data/UCF-101'
         with open(os.path.join(dataset_path, config.data_list + '.txt')) as f:
             self.img_list = []
 
@@ -61,21 +57,6 @@ class UCF101(Dataset):
             images,
             0, [cv2.INTER_LINEAR for _ in range(self.config.step)],
             dsize=target_size)
-
-        # # crop and pad
-        # if self.config.crop_policy == 'random':
-        #     images = tf.group_random_crop(images, target_size)
-        #     images = tf.group_random_pad(
-        #         images, target_size,
-        #         [self.config.input_mean for _ in range(3)])
-        # elif self.config.crop_policy == 'center':
-        #     images = tf.group_center_crop(images, target_size)
-        #     images = tf.group_concer_pad(
-        #         images, target_size,
-        #         [self.config.input_mean for _ in range(3)])
-        # else:
-        #     ValueError('Unknown crop policy: {}'.format(
-        #         self.config.crop_policy))
 
         if hasattr(self.config, 'rotation') and random.random() < 0.5:
             images = tf.group_rotation(

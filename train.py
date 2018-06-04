@@ -65,8 +65,8 @@ def main():
     policies = model.get_optim_policies()
     for group in policies:
         print(('group: {} has {} params, lr_mult: {}, decay_mult: {}'.format(
-            group['name'], len(group['params']), group['lr_mult'],
-            group['decay_mult'])))
+            group['name'],
+            len(group['params']), group['lr_mult'], group['decay_mult'])))
     optimizer = Optim(policies, cfg.train.optimizer)
 
     if cfg.resume or cfg.weight:
@@ -170,8 +170,8 @@ def flip(x, dim):
     x = x.view(x.size(0), x.size(1),
                -1)[:,
                    getattr(
-                       torch.arange(x.size(1) - 1, -1, -1), (
-                           'cpu', 'cuda')[x.is_cuda])().long(), :]
+                       torch.arange(x.size(1) - 1, -1, -1), ('cpu', 'cuda')[
+                           x.is_cuda])().long(), :]
     return x.view(xsize)
 
 

@@ -10,7 +10,7 @@ model = dict(
     mult_bn=[1, 1],  # lr, decay
 )
 
-device = [4, 5, 6, 7]
+device = [0, 1, 2, 3, 4, 5, 6, 7]
 resume = 'outputs/voxelflow_model_best.pth.tar'
 weight = ''
 dataset = 'UCF101'

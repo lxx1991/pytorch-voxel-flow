@@ -6,11 +6,9 @@ from core.ops.sync_bn import SyncBatchNorm2d as BatchNorm2d
 
 def meshgrid(height, width):
     x_t = torch.matmul(
-        torch.ones(height, 1),
-        torch.linspace(-1.0, 1.0, width).view(1, width))
+        torch.ones(height, 1), torch.linspace(-1.0, 1.0, width).view(1, width))
     y_t = torch.matmul(
-        torch.linspace(-1.0, 1.0, height).view(height, 1), torch.ones(
-            1, width))
+        torch.linspace(-1.0, 1.0, height).view(height, 1), torch.ones(1, width))
 
     grid_x = x_t.view(1, height, width)
     grid_y = y_t.view(1, height, width)
@@ -18,6 +16,7 @@ def meshgrid(height, width):
 
 
 class VoxelFlow(nn.Module):
+
     def __init__(self, config):
         super(VoxelFlow, self).__init__()
         self.config = config
