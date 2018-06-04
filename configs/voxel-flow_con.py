@@ -19,7 +19,7 @@ dataset = 'UCF101Fusion'
 
 # Training strategry
 train = dict(
-    batch_size=64,
+    batch_size=16,
     optimizer=dict(
         algorithm='ADAM',
         args=dict(
@@ -32,7 +32,7 @@ train = dict(
             # rate_decay_step=2000,
             max_epoch=400)),
     data_list='train_motion',
-    step=3,
+    step=5,
     syn_type=model['syn_type'],
     crop_size=[256, 256],
     rotation=[-10, 10],
@@ -42,9 +42,9 @@ train = dict(
 
 # Testing strategry
 test = dict(
-    batch_size=64,
+    batch_size=16,
     data_list='test_motion',
-    step=3,
+    step=5,
     syn_type=model['syn_type'],
     crop_size=[256, 256],
     crop_policy='center',

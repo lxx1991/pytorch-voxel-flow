@@ -65,8 +65,8 @@ def main():
     policies = model.get_optim_policies()
     for group in policies:
         print(('group: {} has {} params, lr_mult: {}, decay_mult: {}'.format(
-            group['name'], len(group['params']), group['lr_mult'],
-            group['decay_mult'])))
+            group['name'],
+            len(group['params']), group['lr_mult'], group['decay_mult'])))
     optimizer = Optim(policies, cfg.train.optimizer)
 
     if cfg.resume or cfg.weight:
@@ -133,13 +133,27 @@ def train(train_loader, model, optimizer, criterion, epoch):
 
         # compute output
         output = model(input_var)
-        input_var2 = torch.cat((output, input_var[:, 3:6, :, :]), dim=1)
-        output2 = model(input_var2)
+        prev = input_var[:, 3:6, :, :]
+        outputs = [output]
+
+        for _ in range(cfg.train.step - 3):
+            output = model(torch.cat([prev, output], dim=1))
+            prev = outputs[-1]
+            outputs.append(output)
+
+        output = torch.cat(outputs, dim=1)
 
         idx = np.where(istrain.numpy() == 1)[0]
-
-        loss1 = criterion(output2, input_var[:, 0:3, :, :])
         loss2 = criterion(output[idx, :, :, :], target_var[idx, :, :, :])
+
+        input_var2 = torch.cat([outputs[-1], outputs[-2]], dim=1)
+        prev = outputs[-2]
+        for _ in range(cfg.train.step - 2):
+            output = model(input_var2)
+            input_var2 = torch.cat([prev, output], dim=1)
+            prev = output
+
+        loss1 = criterion(output, input_var[:, 0:3, :, :])
 
         loss = loss1 * cfg.combine_weight + loss2
         # measure accuracy and record loss
@@ -182,8 +196,8 @@ def flip(x, dim):
     x = x.view(x.size(0), x.size(1),
                -1)[:,
                    getattr(
-                       torch.arange(x.size(1) - 1, -1, -1), (
-                           'cpu', 'cuda')[x.is_cuda])().long(), :]
+                       torch.arange(x.size(1) - 1, -1, -1), ('cpu', 'cuda')[
+                           x.is_cuda])().long(), :]
     return x.view(xsize)
 
 
@@ -199,12 +213,21 @@ def validate(val_loader, model, optimizer, criterion, evaluator):
         end = time.time()
         for i, (input, target) in enumerate(val_loader):
             target = target.cuda(async=True)
-            input_var = torch.autograd.Variable(input)
-            target_var = torch.autograd.Variable(target)
+            input_var = torch.autograd.Variable(input).cuda()
+            target_var = torch.autograd.Variable(target).cuda()
 
             # compute output
             output = model(input_var)
 
+            prev = input_var[:, 3:6, :, :]
+            outputs = [output]
+
+            for _ in range(cfg.train.step - 3):
+                output = model(torch.cat([prev, output], dim=1))
+                prev = outputs[-1]
+                outputs.append(output)
+
+            output = torch.cat(outputs, dim=1)
             loss = criterion(output, target_var)
 
             # measure accuracy and record loss

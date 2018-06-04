@@ -47,7 +47,7 @@ class EvalPSNR(object):
         if mask is None:
             mask = np.ones((pred.shape[0], pred.shape[2], pred.shape[3]))
         for i in range(pred.shape[0]):
-            temp = np.tile(mask[i, np.newaxis, :, :], (3, 1, 1))
+            temp = np.tile(mask[i, np.newaxis, :, :], (pred.shape[1], 1, 1))
             if np.sum(temp) == 0:
                 continue
             delta = (pred[i, :, :, :] - gt[i, :, :, :]) * temp
