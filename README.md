@@ -2,7 +2,9 @@
 
 <img src='./assets/demo_teaser.png' width=800>
 
-[[Project]](https://liuziwei7.github.io/projects/VoxelFlow) [[Paper]](https://arxiv.org/abs/1702.02463)
+**_Please contact Dr. Xiaoxiao Li (lxx1991@gmail.com) for the pre-trained models of "Deep Voxel Flow"._**
+
+[[Project]](https://liuziwei7.github.io/projects/VoxelFlow) [[Paper]](https://arxiv.org/abs/1702.02463) [[Demo]](https://liuziwei7.github.io/projects/voxelflow/demo.html)
 
 ## Install
 ```bash
