@@ -2,9 +2,8 @@
 
 <img src='./assets/demo_teaser.png' width=800>
 
-**_Please contact Dr. Xiaoxiao Li (lxx1991@gmail.com) for the pre-trained models of "Deep Voxel Flow"._**
 
-[[Project]](https://liuziwei7.github.io/projects/VoxelFlow) [[Paper]](https://arxiv.org/abs/1702.02463) [[Demo]](https://liuziwei7.github.io/projects/voxelflow/demo.html)
+[[Project]](https://liuziwei7.github.io/projects/VoxelFlow) [[Paper]](https://arxiv.org/abs/1702.02463) [[Demo]](https://liuziwei7.github.io/projects/voxelflow/demo.html) [[Model]](https://drive.google.com/file/d/1FB-mpS4UokiLriDBNJSBmozMQRH0Qez1/view) 
 
 ## Install
 ```bash
@@ -23,8 +22,8 @@ python train.py configs/voxel-flow.py
 
 ## TODOs
   - [x] Training Data Preparation Code
+  - [x] Add Pre-trained Model
   - [ ] Evaluation Code
-  - [ ] Add Pre-trained Model
 
 ## Contact
 For any question, feel free to contact
