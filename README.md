@@ -17,7 +17,7 @@ python train.py configs/voxel-flow.py
 ```
 
 ## Download Pre-trained Model
-We provide our pre-trained model of "Deep Voxel Flow" at: [[Google Drive]](https://drive.google.com/file/d/1FB-mpS4UokiLriDBNJSBmozMQRH0Qez1/view), which achieves a comparable performance as reported in the paper. 
+We provide our pre-trained model of "Deep Voxel Flow" at [[Google Drive]](https://drive.google.com/file/d/1FB-mpS4UokiLriDBNJSBmozMQRH0Qez1/view), which achieves a comparable performance as reported in the paper. 
 
 ## Sample Results
 
