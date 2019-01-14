@@ -19,6 +19,8 @@ class VoxelFlow(nn.Module):
 
     def __init__(self, config):
         super(VoxelFlow, self).__init__()
+        self.train_size_x = 256
+        self.train_size_y = 256
         self.config = config
         self.input_mean = [0.5 * 255, 0.5 * 255, 0.5 * 255]
         self.input_std = [0.5 * 255, 0.5 * 255, 0.5 * 255]
@@ -178,6 +180,9 @@ class VoxelFlow(nn.Module):
 
         flow = x[:, 0:2, :, :]
         mask = x[:, 2:3, :, :]
+
+        flow[:, 0, :, :] *= self.train_size_x / input_size[1]
+        flow[:, 1, :, :] *= self.train_size_y / input_size[0]
 
         grid_x, grid_y = meshgrid(input_size[0], input_size[1])
         with torch.cuda.device(input.get_device()):
